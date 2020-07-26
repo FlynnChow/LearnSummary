@@ -1,6 +1,7 @@
 # encoding: utf-8
 import sys
 import os
+import time
 
 def getTypeName(fileName):
     if fileName == "kotlin":
@@ -46,10 +47,11 @@ def initDir(path,name):
     if count > 0:print("已更新" + name + " Count[" + str(count) +"]")
 
 msg = ''
+date = time.strftime("%Y年%m月%d日 %H:%M")
 if len(sys.argv) >= 2:
     msg = sys.argv[1]
 else:
-    msg = "update content"
+    msg = "更新学习总结-"+date
 
 file_list = os.listdir("./")
 for index in range(0,len(file_list)):
@@ -61,4 +63,7 @@ for index in range(0,len(file_list)):
 os.system('git add .')
 os.system('git commit -m "' + msg + '"')
 os.system('git push origin master')
-print("成功提交到GitHub")
+print("*************************************")
+print("*      总结笔记已整理提交到GitHub!      *")
+print("*           -温故而知新-              *")
+print("*************************************")
