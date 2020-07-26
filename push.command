@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # encoding: utf-8
 import sys
 import os
@@ -60,10 +61,11 @@ for index in range(0,len(file_list)):
         if name == '':continue
         initDir(file_list[index],name)
 
+os.chdir(os.path.dirname(__file__))
 os.system('git add .')
 os.system('git commit -m "' + msg + '"')
 os.system('git push origin master')
 print("*************************************")
-print("*      总结笔记已整理提交到GitHub!      *")
-print("*           -温故而知新-              *")
+print("*      总结笔记已整理提交到GitHub!  *")
+print("*           -温故而知新-            *")
 print("*************************************")
