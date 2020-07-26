@@ -43,7 +43,7 @@ def initDir(path,name):
             fileName,type = os.path.splitext(os.path.basename(file_list[index]))
             if type == '.md':
                 count += 1
-                inputName = '[' + fileName + ']' + '(' + path + '/' + file_list[index] + ')'
+                inputName = '[' + fileName + ']' + '(' + file_list[index] + ')'
                 os.system('echo "* ' + inputName + '\n" >> ' + readme)
     if count > 0:print("已更新" + name + " Count[" + str(count) +"]")
 
