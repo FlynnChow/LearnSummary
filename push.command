@@ -54,6 +54,7 @@ if len(sys.argv) >= 2:
 else:
     msg = "更新学习总结-"+date
 
+os.chdir(os.path.dirname(__file__))
 file_list = os.listdir("./")
 for index in range(0,len(file_list)):
     if(os.path.isdir(file_list[index])):
@@ -61,7 +62,6 @@ for index in range(0,len(file_list)):
         if name == '':continue
         initDir(file_list[index],name)
 
-os.chdir(os.path.dirname(__file__))
 os.system('git add .')
 os.system('git commit -m "' + msg + '"')
 os.system('git push origin master')
