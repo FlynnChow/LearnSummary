@@ -2,7 +2,7 @@
 
 ### GLSL语言
 
-### 定义
+#### 定义
 
 [修饰符]  [精度]  [基本类型]  [定义的变量名]
 
@@ -21,8 +21,6 @@ varying：vertex shader 和 fragment shader信使
 一般在vertex中设置，fragment中使用，fragmemt不能修改
 
 invariant 保证在不同的着色器中精度相同
-
-
 
 #### 精度
 
@@ -57,8 +55,6 @@ sampler2D 2D纹理
 
 samplerCube 立方体纹理，有6个面，每个面都是一个2D纹理
 
-
-
 #### 访问
 
 * 按照坐标系访问：vec.xyzw
@@ -86,7 +82,7 @@ mat2(1.0,1.0,1.0,1.0) * 2.0 = vec2(2.0, 2.0, 2.0, 2.0)
 
 vet/mat是浮点类型，不能和int运算
 
-### 函数
+#### 函数
 
 * 函数不能递归调用
 * 不能嵌套
@@ -201,4 +197,124 @@ Destination_factor 目标透明向量
 * **GL_FUNC_ADD**：Ar = As*sA + Ad*dA
 * **GL_FUNC_SUBTRACT**：Ar = As*sA - Ad*dA
 * **GL_FUNC_REVERSE_SUBTRACT**：Ar = Ad*dA - As*sA
+
+### 坐标系统
+
+![](images/coordinate_img.png)
+
+如图：
+
+在立体几何坐标中绘制绘制一个点的位置，需要x，y，z三个坐标的值
+
+openGL将绘制好的坐标值转换成实际绘制坐标值，需要一系列类似流水线的转换
+
+1. Local Space(局部空间) 它是相对于单独一个模型的坐标系
+
+   如：一个平面三角形坐标
+
+   ```kotlin
+   floatArrayOf(
+           0f,0.5f,0f,
+           -0.5f,-0.5f,0f,
+           0.5f,-0.5f,0f
+       )
+   ```
+
+2. Model Matrix(模型矩阵) 它能将局部坐标转换为世界坐标，模型矩阵是一种变换矩阵，它能通过对物体进行位移、缩放、旋转来将它置于它本应该在的位置或朝向。
+
+   **旋转：**
+
+   做一个从(0,0,0)到(x,y,z)的向量，右手握住向量，大拇指指向向量正方向，四指环绕方向就是旋转方向
+
+   ```kotlin
+   Matrix.rotateM(modelMatrix,offset,angle,x,y,z)
+   ```
+
+   **平移**
+
+   向x/y/z方向移动x/y/z个单位
+
+   ```kotlin
+   Matrix.translateM(modelMatrix,offset,x,y,z)
+   ```
+
+3. World Space(世界空间) 顶点相对于世界(整个程序)的坐标
+
+4. View Matrix(视图矩阵) 将世界坐标转换成观测坐标
+
+   ```kotlin
+   Matrix.setLookAtM(viewMatrix,offset,eyeX,eyeY,eyeZ,centerX,
+   centerY,centerZ,upX,upY,upZ)
+   ```
+
+   在eyeX,eyeY,eyeZ位置放置摄像机，摄像机的头部指向upX,upY,upZ,
+
+   在centerX,centerY,centerZ位置放置观察物体
+
+5. View Space(观测空间) 摄像机前方观测到的空间
+
+6. Projection Matrix(投影矩阵) 将观测坐标转换为裁剪坐标
+
+   ![](images/ortho_img.png)
+
+   ```kotlin
+   Matrix.orthoM(projectMatrix,left,right,radio,bottom,top,near,far)
+   ```
+
+   正交投影会创建一个立方体的视景体，视景体外的像素点就会被剪辑掉
+
+   因为正交投影采用的是平行投影，所以不会产生近大远小的效果
+
+   
+
+   ![](images/frustum_img.png)
+
+   ```kotlin
+   Matrix.orthoM(projectMatrix,left,right,radio,bottom,top,near,far)
+   ```
+
+   透视投影会产生一个类似锥体的视景体，会尝试近大远小的效果
+
+   * **W分量**
+
+   openGL除了xyz外，还有w分量，默认为1，正交投影不会改变w，透视投影会根据近大远小改变w分量的值。
+
+   裁剪实际上就是用像素点的xyz分量和w比较，如果xyz任意分量绝对值小于w的绝对值，就会被裁剪
+
+   * ### 透视除法
+
+   透视除法，就是将 x、y、z 坐标分别除以 w 分量，得到新的 x、y、z 坐标，也叫**归一化设备坐标**。
+
+7. Clip Space(裁剪空间) 经过透视变换后得到的坐标就是裁剪空间，裁剪空间坐标都是在一定范围内(通常[-1,1])
+
+8. Screen Space(屏幕空间)
+
+   OpenGL 会使用 *glViewPort* 函数来将归一化设备坐标映射到屏幕坐标
+
+   这个过程称为视口变换
+
+   ```
+   glViewport(x,y,width,height)
+   ```
+
+   x,y指定窗口左下角位置
+
+   width，height 宽高
+
+#### 适应宽高比
+
+默认情况下，局部空间、世界空间、观察空间、裁剪空间的坐标系都是重合的，都是以(0,0,0)为坐标原点。
+
+归一化设备坐标假定的坐标空间是一个正方形，但手机屏幕的视口却是一个长方形，这样的话，就会有一个方向被拉伸。
+
+解决：
+
+1. 在投影时就把拉伸的情况考虑进去
+
+投影前坐标空间是一个正方形，将正方形对应屏幕较短的一边缩窄，或者将正方形对应屏幕较短的一边拉长，之后将坐标映射到屏幕时就恢复正常的比例了
+
+```kotlin
+//height > width
+Matrix.frustumM(projectMatrix,0,-1f,1f,-height/width,height/width,3f,7f)
+```
 

@@ -1,4 +1,4 @@
 ## OpenGL总结
 
-* [OpenGL基础知识](OpenGL基础知识.md)
+* [OpenGLES基础总结](OpenGLES基础总结.md)
 
