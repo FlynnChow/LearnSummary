@@ -2,5 +2,5 @@
 
 * [HTTP-Cache](HTTP-Cache.md)
 
-* [Quic protocal](Quic protocal.md)
+* [Quic-Protocal](Quic-Protocal.md)
 
