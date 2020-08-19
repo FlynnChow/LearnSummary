@@ -318,3 +318,93 @@ openGL将绘制好的坐标值转换成实际绘制坐标值，需要一系列�
 Matrix.frustumM(projectMatrix,0,-1f,1f,-height/width,height/width,3f,7f)
 ```
 
+
+
+#### 常用的函数
+
+**GLES20.glDrawArrays**(mode, first,count)
+
+Mode:表示绘制的方式
+
+```
+int GL_POINTS    //将传入的顶点坐标作为单独的点绘制
+int GL_LINES     //将传入的坐标作为单独线条绘制，ABCDEFG六个顶点，绘制AB、CD、EF三条线
+int GL_LINE_STRIP  //将传入的顶点作为折线绘制，ABCD四个顶点，绘制AB、BC、CD三条线
+int GL_LINE_LOOP   //将传入的顶点作为闭合折线绘制，ABCD四个顶点，绘制AB、BC、CD、DA四条线。
+int GL_TRIANGLES   //将传入的顶点作为单独的三角形绘制，ABCDEF绘制ABC,DEF两个三角形，之间不连接
+int GL_TRIANGLE_FAN   //将传入的顶点作为扇面绘制，ABCDEF绘制ABC、ACD、ADE、AEF四个三角形
+int GL_TRIANGLE_STRIP  //将传入的顶点作为三角条带绘制，ABCDEF绘制ABC,BCD,CDE,DEF四个三角形
+```
+
+first 第一个绘制的顶点
+
+Count: 绘制的顶点数量
+
+
+
+#### GLES20.glDrawElements(mode,count,type,indices)
+
+根据索引，在顶点序列中找到对应顶点，并根据绘制的方式，进行绘制
+
+Mode:绘制的方式
+
+count：绘制的顶点数量
+
+type: 索引数组的类型
+
+indices：索引数组
+
+#### glTexParmeteri
+
+确定如何把纹理像素映射到屏幕上
+
+**WRAP：**
+
+GL_TEXTURE_WRAP_S，GL_TEXTURE_WRAP_S，GL_TEXTURE_WRAP_S
+
+s水平方向填充效果
+
+t垂直方向填充效果
+
+![](images/tex_par_img.png)
+
+纹理坐标超出[0,0]到[1,1]的范围的处理方式
+
+GL_REPEAT:重复纹理，OpenGL纹理默认的处理方式
+
+GL_MIRRORED_REPEAT: 纹理也会被重复，当纹理坐标的整数部分是奇数时会使用镜像重复
+
+GL_CLAMP_TO_EDGE: 坐标会被截断到[0,1]之间。会形成了一个拉伸的边缘
+
+GL_CLAMP_TO_BORDER: 不在[0,1]范围内的纹理坐标会使用用户指定的边缘颜色
+
+**Filter参数**
+
+处理纹理坐标映射到纹素位置时的策略
+
+GL_TEXTURE_MIN_FILTER:指当纹理图象被使用到一个小于或等于它的形状上时(例如256*256的纹理图像应用到一个512*512的图形上)
+
+GL_TEXTURE_MAG_FILTER:指当纹理图象被使用到一个大于它的形状上时
+
+- GL_LINEAR 线性滤波 ：线性滤波比较平滑，使用纹素位置附近的一组纹素的加权平均值来确定最终的纹素值
+
+- GL_NEAREST 最近邻滤波：
+
+
+
+#### SurfaceTexture
+
+从Image Stream中捕获帧数据，用作OpenGLES的纹理，其中Image Stream来自相机预览或视频解码。
+
+
+
+当updateTexImage()被调用时，SurfaceTexture对象所关联的OpenGLES中纹理对象的内容将被更新为Image Stream中最新的图片。
+
+
+
+**GL_TEXTURE_EXTERNAL_OES**
+
+glsl fragment中需要加入："#extensionGL_OES_EGL_image_external : require"
+
+Parmeteri中使用**GL_TEXTURE_EXTERNAL_OES**
+
