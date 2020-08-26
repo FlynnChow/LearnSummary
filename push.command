@@ -52,7 +52,7 @@ date = time.strftime("%Y年%m月%d日 %H:%M")
 if len(sys.argv) >= 2:
     msg = sys.argv[1]
 else:
-    msg = "更新学习总结-"+date
+    msg = "更新-"+date
 
 os.chdir(os.path.dirname(__file__))
 file_list = os.listdir("./")
@@ -66,6 +66,6 @@ os.system('git add .')
 os.system('git commit -m "' + msg + '"')
 os.system('git push origin master')
 print("*************************************")
-print("*      总结笔记已整理提交到GitHub!  *")
+print("*          已整理提交到GitHub!      *")
 print("*           -温故而知新-            *")
 print("*************************************")
