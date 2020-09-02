@@ -1,5 +1,26 @@
 ## LinkedHashMap
 
+#### 构造方法
+
+initialCapacity：初始大小
+
+loadFactor：扩充系数，初始0.75f
+
+accessOrder：和LRU有有光，设置为true后，调用get方法，会讲entry移动到链表尾部
+
+```java
+public LinkedHashMap(int initialCapacity,
+                         float loadFactor,
+                         boolean accessOrder) {
+        super(initialCapacity, loadFactor);
+        this.accessOrder = accessOrder;
+    }
+```
+
+
+
+#### Put
+
 ```java
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                boolean evict) {
@@ -52,7 +73,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
     ++modCount;
     if (++size > threshold)
         resize();
-  	//LinkedHashMap重写：LRU算法，删除最老的节点
+  	//LinkedHashMap重写了这个方法：LRU算法，删除最老的节点
     afterNodeInsertion(evict);
     return null;
 }
@@ -60,9 +81,9 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 
 
-LinkedHashMap 重写了newNode
+LinkedHashMap 重写了newNode来新建节点
 
-使用了LinkedHashMapEntry，主要加了before和after接口
+换成了LinkedHashMapEntry，主要加了before和after接口(双链表结构)
 
 ```
 Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
@@ -75,7 +96,7 @@ Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
 
 
 
-linkNodeLast进行链表的插入操作，采用的是尾插法
+linkNodeLast用于进行链表的插入操作，采用尾插法
 
 ```
  private void linkNodeLast(LinkedHashMapEntry<K,V> p) {
@@ -107,7 +128,9 @@ public V get(Object key) {
 
 
 
-LRU算法的实现在于afterNodeInsertion
+#### LRU算法的实现在于afterNodeInsertion
+
+改方法再put最后调用，linkedhashmap重写了改方法
 
 ```
 void afterNodeInsertion(boolean evict) { // possibly remove eldest
@@ -121,7 +144,7 @@ void afterNodeInsertion(boolean evict) { // possibly remove eldest
 
 
 
-removeEldestEntry确定map的size在多少就删除
+removeEldestEntry确定map的size到达多少就删除最老的节点
 
 ```
  @Override
