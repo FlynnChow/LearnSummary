@@ -26,7 +26,7 @@ tcp链接是全双工的
 
 #### TCP 握手和挥手
 
-![](/Users/bytedance/Library/Mobile Documents/com~apple~CloudDocs/学习总结/LearnSummary/network/images/tcp_hand.jpg)
+![](images/tcp_hand.jpg)
 
 **3次握手**
 
